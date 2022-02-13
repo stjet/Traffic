@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Intersection</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="debug" style="display:block;">
+      <span id="debug-info"></span>
+      <button id="debug-stop-cars">Stop Cars</button>
+      <button id="toggle-show-crash">Toggle Show Crash</button>
+      <button id="toggle-crash-vanish">Toggle Cars Disappearing After Crash</button>
+    </div>
+    <div id="info">
+      <!--num crashes, num cars-->
+      <b>Crashes #: </b><span id="crashes-num">0</span>
+      <b>Total Cars #: </b><span id="t-car-num">0</span>
+      <b>Current Cars #: </b><span id="c-car-num">0</span>
+      <b>Crash-Cars Ratio: </b><span id="cc-ratio"></span>
+    </div>
+    <script src="script.js"></script>
+    <!--Turning cars are confused at yellow lights-->
+  </body>
+</html>
