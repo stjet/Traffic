@@ -18,7 +18,7 @@ class Canvas {
     this.frame += 1;
     this.clear();
     if (this.light_handler) {
-      this.light_handler(this.components.filter(function(i) {return i.constructor.name == "Light"}), this.components.filter(function(i) {return i.constructor.name == "Car" && i.show && !Car.true_off_canvas(i.coords, canvas) }));
+      this.light_handler(this.lights, this.components.filter(function(i) {return i.constructor.name == "Car" && i.show && !Car.true_off_canvas(i.coords, canvas) }));
     }
     for (var i=0; i < this.components.length; i++) {
       this.components[i].update();
@@ -518,7 +518,6 @@ class Car {
       //no car, revert to previous state
       this.forward = true;
     }
-    /**/
     if (this.forward) {
       if (this.speed < 10) {
         this.accelerate();
@@ -908,7 +907,7 @@ document.getElementById('toggle-crash-vanish').addEventListener('click',function
 
 document.getElementById('apply-function').addEventListener('click',function() {
   canvas.light_handler = function(lights, cars) {
-    document.getElementById('custom-function').value;
+    eval(document.getElementById('custom-function').value);
   }
 })
 
@@ -917,23 +916,57 @@ document.getElementById('spawnRate').addEventListener('change', function() {
   car_spawn_interval = setInterval(car_spawn_func, document.getElementById('spawnRate').value);
 });
 
-/*
-`
-if (this.in_progress_) {
-  return
-}
-for (light_num=0; light_num < lights.length; light_num++) {
+let order_light_handler = `if (this.in_progress_) {
+} else {
   //alternate the lights
-  lights[light_num]
   //green: up lane all, down lane all, left lane all, right lane all, repeat
   if (!this.current_direction_) {
     this.current_direction_ = 'up';
     this.in_progress_ = false;
   }
-  //
+  for (let light_num=0; light_num < Object.keys(lights).length; light_num++) {
+    lights[Object.keys(lights)[light_num]].state = "stop";
+  }
+  //3.5 seconds
+  switch (this.current_direction_) {
+    case 'up':
+      //yes I am aware this is an object and I should do lights['upleft'] but whatever
+      lights[Object.keys(lights)[0]].state = "go";
+      lights[Object.keys(lights)[1]].state = "go";
+      lights[Object.keys(lights)[2]].state = "go";
+      break;
+    case 'down':
+      lights[Object.keys(lights)[3]].state = "go";
+      lights[Object.keys(lights)[4]].state = "go";
+      lights[Object.keys(lights)[5]].state = "go";
+      break;
+    case 'left':
+      lights[Object.keys(lights)[6]].state = "go";
+      lights[Object.keys(lights)[7]].state = "go";
+      lights[Object.keys(lights)[8]].state = "go";
+      break;
+    case 'right':
+      lights[Object.keys(lights)[9]].state = "go";
+      lights[Object.keys(lights)[10]].state = "go";
+      lights[Object.keys(lights)[11]].state = "go";
+      break;
+  }
+  this.in_progress_ = true;
+  //let it be green for 3.25 seconds
+  function change_light() {
+    canvas.in_progress_ = false;
+    let order = ['up', 'down', 'left', 'right'];
+    if (order.indexOf(canvas.current_direction_)+1 > order.length) {
+      canvas.current_direction_ = order[0];
+      return
+    }
+    canvas.current_direction_ = order[order.indexOf(canvas.current_direction_)+1];
+  }
+  setTimeout(change_light, 3250);
 }
-`
-*/
+`;
+
+document.getElementById('custom-function').value = order_light_handler;
 
 /*
 document.addEventListener("keydown", function(event) {
