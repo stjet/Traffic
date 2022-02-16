@@ -7,20 +7,29 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id="debug" style="display:block;">
-      <span id="debug-info"></span>
-      <button id="debug-stop-cars">Stop Cars</button>
-      <button id="toggle-show-crash">Toggle Show Crash</button>
-      <button id="toggle-crash-vanish">Toggle Cars Disappearing After Crash</button>
+    <div id="top">
+      <div id="debug" style="display:block;">
+        <span id="debug-info"></span>
+        <button id="debug-stop-cars">Stop Cars</button>
+        <button id="toggle-show-crash">Toggle Show Crash</button>
+        <button id="toggle-crash-vanish">Toggle Cars Disappearing After Crash</button>
+        <label for="spawnRate">Spawn Rate:</label><input type="range" min="400" max="1000" value="50" class="slider" id="spawnRate">
+      </div>
+      <div id="info">
+        <!--num crashes, num cars-->
+        <b>Crashes #: </b><span id="crashes-num">0</span>
+        <b>Total Cars #: </b><span id="t-car-num">0</span>
+        <b>Current Cars #: </b><span id="c-car-num">0</span>
+        <b>Crash-Cars Ratio: </b><span id="cc-ratio"></span>
+      </div>
     </div>
-    <div id="info">
-      <!--num crashes, num cars-->
-      <b>Crashes #: </b><span id="crashes-num">0</span>
-      <b>Total Cars #: </b><span id="t-car-num">0</span>
-      <b>Current Cars #: </b><span id="c-car-num">0</span>
-      <b>Crash-Cars Ratio: </b><span id="cc-ratio"></span>
+    <div id="right">
+      <div id="custom-function-div">
+        <b>Custom Function:</b><br>
+        <textarea id="custom-function"></textarea><br>
+        <button id="apply-function">Apply</button>
+      </div>
     </div>
     <script src="script.js"></script>
-    <!--Turning cars are confused at yellow lights-->
   </body>
 </html>

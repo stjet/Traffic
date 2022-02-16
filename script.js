@@ -10,12 +10,16 @@ class Canvas {
     this.components = [];
     this.events = {};
     this.frame = 0;
+    //modifications
     this.show_crash = false;
     this.crash_vanish = true;
   }
   update() {
     this.frame += 1;
     this.clear();
+    if (this.light_handler) {
+      this.light_handler(this.components.filter(function(i) {return i.constructor.name == "Light"}), this.components.filter(function(i) {return i.constructor.name == "Car" && i.show && !Car.true_off_canvas(i.coords, canvas) }));
+    }
     for (var i=0; i < this.components.length; i++) {
       this.components[i].update();
     }
@@ -291,7 +295,7 @@ class Car {
     return false
   }
   static true_off_canvas(coords, canvas) {
-    if (coords[0] < 0 || coords[0] > canvas.canvas.width || coords[1] < 0 || coords[1] > canvas.canvas.height) {
+    if (coords[0] <= 0 || coords[0] >= canvas.canvas.width || coords[1] <= 0 || coords[1] >= canvas.canvas.height) {
       return true
     }
     return false
@@ -368,9 +372,6 @@ class Car {
                 break;
             }
 
-            if (this.speed > 0) {
-              console.log(this.canvas.frame, this.canvas.components[car_num].color, c1, c2, this.color, in_front)
-            }
             if (in_front) {
               let closeness = Car.distance(c1, c2);
               //if too close, stop the car
@@ -395,6 +396,10 @@ class Car {
     }
     return false
   }
+  destroy() {
+    this.show = false;
+    this.canvas.components.splice(this.canvas.components.indexOf(this), 1);
+  }
   update() {
     if (this.off_canvas()) {
       this.destroy();
@@ -410,6 +415,7 @@ class Car {
       //add crash
       if (this.canvas.crash_vanish) {
         this.destroy();
+        //console.log(collision.car)
         collision.car.destroy();
       }
       console.log('boom');
@@ -587,10 +593,6 @@ class Car {
     this.canvas.context.fillStyle = "black";
     this.canvas.context.fillRect(this.get_center()[0], this.get_center()[1], 3, 3);
     */
-  }
-  destroy() {
-    this.show = false;
-    this.canvas.components.splice(this.canvas.components.indexOf(this), 1);
   }
 }
 
@@ -839,7 +841,7 @@ for (let i=0; i < 9; i++) {
 
 canvas.crash_counter = 0;
 
-let car_spawn_interval = setInterval(function () {
+function car_spawn_func() {
   let start = Math.floor(Math.random()*lanes.length);
   let destination = Math.floor(Math.random()*lanes.length);
   if (!((start == 0 && destination == 1) || start == 1 && destination == 0) || (start == 2 && destination == 3) || (start == 3 && destination == 2)) {
@@ -851,7 +853,9 @@ let car_spawn_interval = setInterval(function () {
     document.getElementById('crashes-num').innerText = String(canvas.crash_counter);
     document.getElementById('cc-ratio').innerText = String((canvas.crash_counter/cars.length).toPrecision(4))
   }
-}, 400);
+}
+
+let car_spawn_interval = setInterval(car_spawn_func, 400);
 
 /*
 let start = Math.floor(Math.random()*lanes.length);
@@ -901,6 +905,35 @@ document.getElementById('toggle-show-crash').addEventListener('click',function()
 document.getElementById('toggle-crash-vanish').addEventListener('click',function() {
   canvas.crash_vanish = !canvas.crash_vanish;
 })
+
+document.getElementById('apply-function').addEventListener('click',function() {
+  canvas.light_handler = function(lights, cars) {
+    document.getElementById('custom-function').value;
+  }
+})
+
+document.getElementById('spawnRate').addEventListener('change', function() {
+  clearInterval(car_spawn_interval);
+  car_spawn_interval = setInterval(car_spawn_func, document.getElementById('spawnRate').value);
+});
+
+/*
+`
+if (this.in_progress_) {
+  return
+}
+for (light_num=0; light_num < lights.length; light_num++) {
+  //alternate the lights
+  lights[light_num]
+  //green: up lane all, down lane all, left lane all, right lane all, repeat
+  if (!this.current_direction_) {
+    this.current_direction_ = 'up';
+    this.in_progress_ = false;
+  }
+  //
+}
+`
+*/
 
 /*
 document.addEventListener("keydown", function(event) {
